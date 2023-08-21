@@ -19,12 +19,12 @@ pub use transform::{PlotBounds, PlotTransform};
 
 use self::items::{horizontal_line, rulers_color, vertical_line};
 
-mod items;
+pub mod items;
 mod legend;
 mod transform;
 
 type LabelFormatterFn = dyn Fn(&str, &PlotPoint) -> String;
-type LabelFormatter = Option<Box<LabelFormatterFn>>;
+pub type LabelFormatter = Option<Box<LabelFormatterFn>>;
 type AxisFormatterFn = dyn Fn(f64, &RangeInclusive<f64>) -> String;
 type AxisFormatter = Option<Box<AxisFormatterFn>>;
 
@@ -122,7 +122,7 @@ impl PlotMemory {
 
 /// Indicates a vertical or horizontal cursor line in plot coordinates.
 #[derive(Copy, Clone, PartialEq)]
-enum Cursor {
+pub enum Cursor {
     Horizontal { y: f64 },
     Vertical { x: f64 },
 }
@@ -1126,6 +1126,11 @@ impl PlotUi {
         self.last_plot_transform.value_from_position(position)
     }
 
+    /// Add a widget that implements [`PlotItem`]
+    pub fn add(&mut self, widget: impl PlotItem + 'static) {
+        self.items.push(Box::new(widget))
+    }
+
     /// Add a data line.
     pub fn line(&mut self, mut line: Line) {
         if line.series.is_empty() {
@@ -1580,10 +1585,6 @@ impl PreparedPlot {
             ..
         } = self;
 
-        if !show_x && !show_y {
-            return Vec::new();
-        }
-
         let interact_radius_sq: f32 = (16.0f32).powi(2);
 
         let candidates = items.iter().filter_map(|item| {
@@ -1619,6 +1620,10 @@ impl PreparedPlot {
                 &mut cursors,
                 label_formatter,
             );
+        }
+
+        if !show_x && !show_y {
+            return Vec::new();
         }
 
         cursors

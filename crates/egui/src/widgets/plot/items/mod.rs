@@ -18,12 +18,12 @@ pub use values::{LineStyle, MarkerShape, Orientation, PlotPoint, PlotPoints};
 mod bar;
 mod box_elem;
 mod rect_elem;
-mod values;
+pub mod values;
 
 const DEFAULT_FILL_ALPHA: f32 = 0.05;
 
 /// Container to pass-through several parameters related to plot visualization
-pub(super) struct PlotConfig<'a> {
+pub struct PlotConfig<'a> {
     pub ui: &'a Ui,
     pub transform: &'a PlotTransform,
     pub show_x: bool,
@@ -31,7 +31,7 @@ pub(super) struct PlotConfig<'a> {
 }
 
 /// Trait shared by things that can be drawn in the plot.
-pub(super) trait PlotItem {
+pub trait PlotItem {
     fn shapes(&self, ui: &mut Ui, transform: &PlotTransform, shapes: &mut Vec<Shape>);
 
     /// For plot-items which are generated based on x values (plotting functions).
@@ -1682,6 +1682,10 @@ pub(super) fn rulers_at_value(
     cursors: &mut Vec<Cursor>,
     label_formatter: &LabelFormatter,
 ) {
+    if !plot.show_x && !plot.show_y {
+        return;
+    }
+
     if plot.show_x {
         cursors.push(Cursor::Vertical { x: value.x });
     }

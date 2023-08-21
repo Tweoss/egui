@@ -128,7 +128,7 @@ impl PlotBounds {
         self.max[1] = other.max[1];
     }
 
-    pub(crate) fn merge(&mut self, other: &PlotBounds) {
+    pub fn merge(&mut self, other: &PlotBounds) {
         self.min[0] = self.min[0].min(other.min[0]);
         self.min[1] = self.min[1].min(other.min[1]);
         self.max[0] = self.max[0].max(other.max[0]);
