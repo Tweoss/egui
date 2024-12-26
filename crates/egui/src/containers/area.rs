@@ -462,12 +462,17 @@ impl Area {
                 }
             });
 
+            let mut global_constrain_rect = constrain_rect;
+            if let Some(transform) = ctx.layer_transform_from_global(layer_id) {
+                global_constrain_rect = transform.mul_rect(global_constrain_rect);
+            }
+
             let move_response = ctx.create_widget(
                 WidgetRect {
                     id: interact_id,
                     layer_id,
                     rect: state.rect(),
-                    interact_rect: state.rect().intersect(constrain_rect),
+                    interact_rect: state.rect().intersect(global_constrain_rect),
                     sense,
                     enabled,
                 },
