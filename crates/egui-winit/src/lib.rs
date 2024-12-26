@@ -759,7 +759,8 @@ impl State {
         // emit events as if the corresponding keys from the Latin layout were pressed. In this case, clipboard shortcuts
         // are mapped to the physical keys that normally contain C, X, V, etc.
         // See also: https://github.com/emilk/egui/issues/3653
-        if let Some(active_key) = logical_key.or(physical_key) {
+        if let Some(active_key) = physical_key.or(logical_key) {
+        // if let Some(active_key) = logical_key.or(physical_key) {
             if pressed {
                 if is_cut_command(self.egui_input.modifiers, active_key) {
                     self.egui_input.events.push(egui::Event::Cut);
